@@ -1,6 +1,5 @@
-import pandas as pd
-import numpy as np
-import csv
+# import pandas as pd
+# import numpy as np
 
 # Every 'Hauptwarengruppe', to be filled
 Warengruppen_dict = {

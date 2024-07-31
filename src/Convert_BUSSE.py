@@ -1,15 +1,13 @@
-import pandas as pd
+# import pandas as pd
 import re
-import csv
+# import csv
 import joblib
 import nltk
 import contractions
-import tqdm
+# import tqdm
 import re
-import os
-#load env file
-from dotenv import load_dotenv
-load_dotenv()
+from huggingface_hub import hf_hub_download
+
 
 ### Setting up all of the dictionarys needed for BUSSE
 
@@ -74,8 +72,10 @@ def normalize_document(doc):
     doc = ' '.join(filtered_tokens)
     return doc
 
-model_zg_path = os.getenv("BUSSE_ZG_MODEL")
-zielgruppen_model = joblib.load(model_zg_path)
+
+zielgruppen_model = joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "BUSSE_zielgruppe_model.pkl")
+)
 
 
 ### creating the dictionary for the different o_Optionen depending on the value of Attributmenge

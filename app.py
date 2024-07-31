@@ -10,6 +10,7 @@ import joblib
 import csv
 import os
 import importlib
+from huggingface_hub import hf_hub_download
 
 #load env file
 from dotenv import load_dotenv
@@ -22,7 +23,20 @@ st.title("Product Data Conversion")
 st.header("Vendor")
 producer = st.selectbox("Please select the vendor", ["", "BUSSE", "Kerbl", "Waldhausen", "HV_Polo", "HKM"])
 
-st.header("Product type")
+# Load module relevant for the vendor
+with st.spinner(f"Loading the module for {producer} ..."):
+    if producer == 'BUSSE' :
+        from src import Convert_BUSSE
+    elif producer == 'Kerbl':
+        from src import Convert_Kerbl
+    elif producer == 'Waldhausen':
+        from src import Convert_Waldhausen
+    elif producer == 'HV_Polo':
+        from src import Convert_HV_Polo
+    elif producer == 'HKM':
+        from src import Convert_HKM
+
+st.header("Product type: shop or stock item")
 product_type = st.selectbox("Please select the product type", ["", "is_shop", "is_stock_item"])
 if product_type == 'is_shop':
     is_shop = 1
@@ -50,13 +64,13 @@ if color_choice == "Yes: upload a new dictionary":
         for i in range(len(colors_dict_file)):
             colors_dict[colors_dict_file.iloc[i]['Hersteller'].lower()] = colors_dict_file.iloc[i]['Grundfarbe']
     else: 
-        colors_dict_path = os.getenv("COLOR_DICT_FILE")
+        colors_dict_path = "data/Color_dict.xlsx"
         colors_dict_file = pd.read_excel(colors_dict_path, sheet_name = 0)
         colors_dict = {}
         for i in range(len(colors_dict_file)):
             colors_dict[colors_dict_file.iloc[i]['Hersteller'].lower()] = colors_dict_file.iloc[i]['Grundfarbe']
 else:
-    colors_dict_path = os.getenv("COLOR_DICT_FILE")
+    colors_dict_path = "data/Color_dict.xlsx"
     colors_dict_file = pd.read_excel(colors_dict_path, sheet_name = 0)
     colors_dict = {}
     for i in range(len(colors_dict_file)):
@@ -66,8 +80,8 @@ st.header("Product data")
 if producer == "" :
     st.write("Please select a vendor before uploading the product data")
 else:
-    with st.spinner('Loading data...'):
-        data_raw = st.file_uploader("Upload a file", type=["xlsx", "xls", "xlsm"])
+    with st.spinner('Loading file...'):
+        data_raw = st.file_uploader("Please upload a file", type=["xlsx", "xls", "xlsm"])
     if data_raw:
         if producer == 'BUSSE' :
             data = pd.read_excel(data_raw, sheet_name = 2)
@@ -79,17 +93,31 @@ else:
         else:
             data = pd.read_excel(data_raw)
 
-# Load module relevant for the vendor
-if producer == 'BUSSE' :
-    from src import Convert_BUSSE
-elif producer == 'Kerbl':
-    from src import Convert_Kerbl
-elif producer == 'Waldhausen':
-    from src import Convert_Waldhausen
-elif producer == 'HV_Polo':
-    from src import Convert_HV_Polo
-elif producer == 'HKM':
-    from src import Convert_HKM
+
+# Downloading models
+loaded_models = []
+# these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
+loaded_models_names = []
+
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "pack_breite_model.pkl")
+))
+loaded_models_names.append('pack_breite')
+
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "pack_hoehe_model.pkl")
+))
+loaded_models_names.append('pack_hoehe')
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "pack_laenge_model.pkl")
+))
+loaded_models_names.append('pack_laenge')
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "season_model.pkl")
+))
+loaded_models_names.append('season')
+
+
 
 
 # The main function

@@ -3,15 +3,11 @@
 #######################
 
 # Dependencies
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 import re
-import string
 import fasttext
-import os
-#load env file
-from dotenv import load_dotenv
-load_dotenv()
+from huggingface_hub import hf_hub_download
 
 fasttext.FastText.eprint = lambda x: None # Disable fasttext warnings
 
@@ -115,10 +111,12 @@ dict_zg_gr = {
 
 # Load models for Attirubtset and Zielgruppe, and needed dicts
 
-model_at_path = os.getenv("HV_POLO_ATT_FT_MODEL")
-model_zg_path = os.getenv("HV_POLO_ZG_FT_MODEL")
-model_at = fasttext.load_model(model_at_path)
-model_zg = fasttext.load_model(model_zg_path)
+model_at = fasttext.load_model(
+    hf_hub_download("Adriperse/RD-CA", "hvpolo_attributset_model.bin")
+)
+model_zg = fasttext.load_model(
+    hf_hub_download("Adriperse/RD-CA", "hvpolo_zielgruppe_model.bin")
+)
 
 label_mapper_at = {
     '__label__Decken': 'Decken',
@@ -289,8 +287,10 @@ def get_brand(use_configurable,current_row,row_is_simple,current_row_nr, current
 #     return ""
 
 def get_tax_class_id(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("1 is entered as the default tax class ID for all products.")
-    return 1
+    if current_attr == "Futter":
+        return "Futtermittel"
+    else:
+        return "1"
 
 def get_Beschreibung(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
     if current_row["Description"] == "":
@@ -381,25 +381,25 @@ def get_base_color(use_configurable,current_row,row_is_simple,current_row_nr, cu
     else:
         return ""
     
-def get_pack_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("Information on item length is available. Parcel length needs to be calculated.")
-    return ""
+# def get_pack_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
+#     # print("Information on item length is available. Parcel length needs to be calculated.")
+#     return ""
 
-def get_pack_breite(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("Information on item width is available. Parcel width needs to be calculated.")
-    return ""
+# def get_pack_breite(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
+#     # print("Information on item width is available. Parcel width needs to be calculated.")
+#     return ""
 
-def get_pack_hoehe(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("Information on item height is available. Parcel height needs to be calculated.")
-    return ""
+# def get_pack_hoehe(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
+#     # print("Information on item height is available. Parcel height needs to be calculated.")
+#     return ""
 
-def get_is_shop(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("1 is entered as the default value for 'is_shop'. This should normally be defined by the user.")
-    return 1
+# def get_is_shop(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
+#     # print("1 is entered as the default value for 'is_shop'. This should normally be defined by the user.")
+#     return 1
 
-def get_is_stock_item(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("0 is entered as the default value for 'is_stock_item'. This should normally be defined by the user.")
-    return 0
+# def get_is_stock_item(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
+#     # print("0 is entered as the default value for 'is_stock_item'. This should normally be defined by the user.")
+#     return 0
 
 def get_season(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
     return current_row["Season"]
@@ -424,9 +424,9 @@ def get_VPE(use_configurable,current_row,row_is_simple,current_row_nr, current_L
     # print("1 is entered as the default value for 'VPE'")
     return 1
 
-def get_Cost_Discount(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    # print("No information was found for 'Cost Discount' in the original data file.")
-    return ""
+# def get_Cost_Discount(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
+#     # print("No information was found for 'Cost Discount' in the original data file.")
+#     return ""
 
 def get_color(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
     color_info = current_row["Colour"]
@@ -466,7 +466,7 @@ def get_zielgruppe(use_configurable,current_row,row_is_simple,current_row_nr, cu
 # Functions for option columns
 
 def get_rueckenlaenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Decken', 'Hundedecken']:
+    if row_is_simple and current_attr in ['Decken', 'Hundedecken']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -476,31 +476,31 @@ def get_rueckenlaenge(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_halsteil(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Decken']:
+    if row_is_simple and current_attr in ['Decken']:
         return "Unknown"
     else:
         return ""
 
 def get_fuellung(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Decken']:
+    if row_is_simple and current_attr in ['Decken']:
         return "Unknown"
     else:
         return ""
     
 def get_denier(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Decken']:
+    if row_is_simple and current_attr in ['Decken']:
         return "Unknown"
     else:
         return ""
 
 def get_materialeigenschaft (use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Decken']:
+    if row_is_simple and current_attr in ['Decken']:
         return "Unknown"
     else:
         return ""
 
 def get_produktmerkmale (use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Decken']:
+    if row_is_simple and current_attr in ['Decken']:
         return "Unknown"
     else:
         return ""
@@ -509,7 +509,7 @@ def get_pflegehinweis(use_configurable,current_row,row_is_simple,current_row_nr,
         return current_row["CareInstructions"]
 
 def get_hosen_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Hosen']:
+    if row_is_simple and current_attr in ['Hosen']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -519,13 +519,13 @@ def get_hosen_groesse(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_besatz(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Hosen']:
+    if row_is_simple and current_attr in ['Hosen']:
         return current_row["SubGroup"]
     else:
         return ""
 
 def get_oberbekleidung_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Oberbekleidung']:
+    if row_is_simple and current_attr in ['Oberbekleidung']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -535,7 +535,7 @@ def get_oberbekleidung_groesse(use_configurable,current_row,row_is_simple,curren
         return ""
 
 def get_schuhgroesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Schuhe, Stiefel und Socken']:
+    if row_is_simple and current_attr in ['Schuhe, Stiefel und Socken']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -545,25 +545,25 @@ def get_schuhgroesse(use_configurable,current_row,row_is_simple,current_row_nr, 
         return ""
 
 def get_verschlussart_schuhe(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Schuhe, Stiefel und Socken']:
+    if row_is_simple and current_attr in ['Schuhe, Stiefel und Socken']:
         return current_row["Closure"]
     else:
         return ""
 
 def get_wadenweite(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Schuhe, Stiefel und Socken']:
+    if row_is_simple and current_attr in ['Schuhe, Stiefel und Socken']:
         return "Unknown"
     else:
         return ""
 
 def get_schafthoehe(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Schuhe, Stiefel und Socken']:
+    if row_is_simple and current_attr in ['Schuhe, Stiefel und Socken']:
         return "Unknown"
     else:
         return ""
 
 def get_sporen_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Sporen']:
+    if row_is_simple and current_attr in ['Sporen']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -573,7 +573,7 @@ def get_sporen_laenge(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_sporenriemen_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Sporenriemen']:
+    if row_is_simple and current_attr in ['Sporenriemen']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -583,13 +583,13 @@ def get_sporenriemen_laenge(use_configurable,current_row,row_is_simple,current_r
         return ""
 
 def get_sporenriemen_material(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Sporenriemen']:
+    if row_is_simple and current_attr in ['Sporenriemen']:
         return current_row["Composition"]
     else:
         return ""
 
 def get_kopfgroesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Reithelme']:
+    if row_is_simple and current_attr in ['Reithelme']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -599,7 +599,7 @@ def get_kopfgroesse(use_configurable,current_row,row_is_simple,current_row_nr, c
         return ""
 
 def get_schutzwesten_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Schutzwesten']:
+    if row_is_simple and current_attr in ['Schutzwesten']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -609,7 +609,7 @@ def get_schutzwesten_groesse(use_configurable,current_row,row_is_simple,current_
         return ""
 
 def get_gerten_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Gerten und Peitschen']:
+    if row_is_simple and current_attr in ['Gerten und Peitschen']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -619,7 +619,7 @@ def get_gerten_laenge(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_pferdegroesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Trensen, Kandaren und Halfter','Fliegenhauben', 'Hilfszuegel', 'Beinschutz']:
+    if row_is_simple and current_attr in ['Trensen, Kandaren und Halfter','Fliegenhauben', 'Hilfszuegel', 'Beinschutz']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -629,19 +629,19 @@ def get_pferdegroesse(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_ausfuehrung_halfter(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Trensen, Kandaren und Halfter']:
+    if row_is_simple and current_attr in ['Trensen, Kandaren und Halfter']:
         return "Unknown"
     else:
         return ""
 
 def get_hilfszuegel_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Hilfszuegel']:
+    if row_is_simple and current_attr in ['Hilfszuegel']:
         return "Unknown"
     else:
         return ""
 
 def get_strick_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Stricke']:
+    if row_is_simple and current_attr in ['Stricke']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -651,13 +651,13 @@ def get_strick_laenge(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_verschlussart_stricke(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Stricke']:
+    if row_is_simple and current_attr in ['Stricke']:
         return current_row["Closure"]
     else:
         return ""
 
 def get_gebiss_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Gebisse']:
+    if row_is_simple and current_attr in ['Gebisse']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -667,25 +667,25 @@ def get_gebiss_groesse(use_configurable,current_row,row_is_simple,current_row_nr
         return ""
 
 def get_gebiss_staerke(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Gebisse']:
+    if row_is_simple and current_attr in ['Gebisse']:
         return "Unknown" # This is mandatory information
     else:
         return ""
 
 def get_gebissart(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Gebisse']:
+    if row_is_simple and current_attr in ['Gebisse']:
         return "Unknown"
     else:
         return ""
 
 def get_gebissmaterial(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Gebisse']:
+    if row_is_simple and current_attr in ['Gebisse']:
         return current_row["Composition"]
     else:
         return ""
 
 def get_sattelgurt_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Sattelgurte']:
+    if row_is_simple and current_attr in ['Sattelgurte']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -695,13 +695,13 @@ def get_sattelgurt_laenge(use_configurable,current_row,row_is_simple,current_row
         return ""
 
 def get_art_des_sattelgurtes(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Sattelgurte']:
+    if row_is_simple and current_attr in ['Sattelgurte']:
         return "Unknown"
     else:
         return ""
     
 def get_beinschutz_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Beinschutz']:
+    if row_is_simple and current_attr in ['Beinschutz']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -711,19 +711,19 @@ def get_beinschutz_groesse(use_configurable,current_row,row_is_simple,current_ro
         return ""
 
 def get_inhalt(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Pflegeprodukte', 'Futter', 'Heimtierfutter']:
+    if row_is_simple and current_attr in ['Pflegeprodukte', 'Futter', 'Heimtierfutter']:
         return "Unknown" # This is mandatory information
     else:
         return ""
 
 def get_pferdefutter_art(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Futter']:
+    if row_is_simple and current_attr in ['Futter']:
         return "Unknown"
     else:
         return ""
 
 def get_handschuh_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Handschuhe']:
+    if row_is_simple and current_attr in ['Handschuhe']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -733,7 +733,7 @@ def get_handschuh_groesse(use_configurable,current_row,row_is_simple,current_row
         return ""
 
 def get_sitzgroesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Saettel']:
+    if row_is_simple and current_attr in ['Saettel']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -743,13 +743,13 @@ def get_sitzgroesse(use_configurable,current_row,row_is_simple,current_row_nr, c
         return ""
 
 def get_kammerweite(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Saettel']:
+    if row_is_simple and current_attr in ['Saettel']:
         return "Unknown" # This is mandatory information. Also not clear if Size columns refers to this or sitzgroesse.
     else:
         return ""
 
 def get_schabracken_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Schabracken']:
+    if row_is_simple and current_attr in ['Schabracken']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -759,7 +759,7 @@ def get_schabracken_groesse(use_configurable,current_row,row_is_simple,current_r
         return ""
 
 def get_trittflaeche(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Steigbügel']:
+    if row_is_simple and current_attr in ['Steigbügel']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -769,7 +769,7 @@ def get_trittflaeche(use_configurable,current_row,row_is_simple,current_row_nr, 
         return ""
 
 def get_riemen_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Steigbuegelriemen']:
+    if row_is_simple and current_attr in ['Steigbuegelriemen']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -779,7 +779,7 @@ def get_riemen_laenge(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_zubehoer_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Pferdezubehoer', 'Heimtierzubehoer', 'Elektronikzubehoer']:
+    if row_is_simple and current_attr in ['Pferdezubehoer', 'Heimtierzubehoer', 'Elektronikzubehoer']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -789,7 +789,7 @@ def get_zubehoer_groesse(use_configurable,current_row,row_is_simple,current_row_
         return ""
 
 def get_accessoires_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Accessoires']:
+    if row_is_simple and current_attr in ['Accessoires']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -799,7 +799,7 @@ def get_accessoires_groesse(use_configurable,current_row,row_is_simple,current_r
         return ""
 
 def get_halsband_groesse(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Halsbänder']:
+    if row_is_simple and current_attr in ['Halsbänder']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -809,19 +809,19 @@ def get_halsband_groesse(use_configurable,current_row,row_is_simple,current_row_
         return ""
 
 def get_halsband_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Halsbänder']:
+    if row_is_simple and current_attr in ['Halsbänder']:
         return "Unknown" # This is mandatory information. Also not clear if Size columns refers to this or halsband_groesse.
     else:
         return ""
 
 def get_heimtierfutter_art(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Heimtierfutter']:
+    if row_is_simple and current_attr in ['Heimtierfutter']:
         return "Unknown"
     else:
         return ""
 
 def get_leinen_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Leinen und Geschirre']:
+    if row_is_simple and current_attr in ['Leinen und Geschirre']:
         if current_row["Size"] in size_mapper.keys():
             size = size_mapper[current_row["Size"]]
         else:
@@ -831,13 +831,13 @@ def get_leinen_laenge(use_configurable,current_row,row_is_simple,current_row_nr,
         return ""
 
 def get_kabel(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Elektronik']:
+    if row_is_simple and current_attr in ['Elektronik']:
         return "Unknown"
     else:
         return ""
 
 def get_leistung(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-    if get_Attributmenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr) in ['Elektronik']:
+    if row_is_simple and current_attr in ['Elektronik']:
         return "Unknown"
     else:
         return ""

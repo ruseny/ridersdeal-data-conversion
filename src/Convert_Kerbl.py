@@ -1,7 +1,4 @@
-import pandas as pd
-import math
-import csv
-import joblib
+# import pandas as pd
 
 ### creating a dictionary for the values of the column Attributmenge depending on the values of the column PRODUKTNAME_KOMPLETT_STR
 dict_Attributmenge = {
