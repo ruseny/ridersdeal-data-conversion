@@ -51,8 +51,7 @@ Warengruppen_dict = {
     'BMT': 'Trensen, Kandaren und Halfter'
 }
 
-nltk.download('stopwords')
-stopwords = nltk.corpus.stopwords.words('german')
+from stopwords_de import stopwords
 
 def normalize_document(doc):
     # fix contractions
