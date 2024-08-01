@@ -5,16 +5,17 @@
 #Dependencies
 import streamlit as st
 import pandas as pd
+import numpy as np
 import inspect
 import joblib
 import csv
 import os
-import importlib
+# import importlib
 from huggingface_hub import hf_hub_download
 
 #load env file
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 ### Streamlit design and inputs
 
@@ -64,13 +65,13 @@ if color_choice == "Yes: upload a new dictionary":
         for i in range(len(colors_dict_file)):
             colors_dict[colors_dict_file.iloc[i]['Hersteller'].lower()] = colors_dict_file.iloc[i]['Grundfarbe']
     else: 
-        colors_dict_path = "data/Color_dict.xlsx"
+        colors_dict_path = "data/color_dict.xlsx"
         colors_dict_file = pd.read_excel(colors_dict_path, sheet_name = 0)
         colors_dict = {}
         for i in range(len(colors_dict_file)):
             colors_dict[colors_dict_file.iloc[i]['Hersteller'].lower()] = colors_dict_file.iloc[i]['Grundfarbe']
 else:
-    colors_dict_path = "data/Color_dict.xlsx"
+    colors_dict_path = "data/color_dict.xlsx"
     colors_dict_file = pd.read_excel(colors_dict_path, sheet_name = 0)
     colors_dict = {}
     for i in range(len(colors_dict_file)):
@@ -94,30 +95,30 @@ else:
             data = pd.read_excel(data_raw)
 
 
-# Downloading models
-loaded_models = []
-# these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
-loaded_models_names = []
+# # Downloading models
+# loaded_models = []
+# # these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
+# loaded_models_names = []
 
-loaded_models.append(joblib.load(
-    hf_hub_download("Adriperse/RD-CA2", "pack_breite_model.pkl")
-))
-loaded_models_names.append('pack_breite')
+# loaded_models.append(joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "pack_breite_model.pkl")
+# ))
+# loaded_models_names.append('pack_breite')
 
-loaded_models.append(joblib.load(
-    hf_hub_download("Adriperse/RD-CA2", "pack_hoehe_model.pkl")
-))
-loaded_models_names.append('pack_hoehe')
-loaded_models.append(joblib.load(
-    hf_hub_download("Adriperse/RD-CA2", "pack_laenge_model.pkl")
-))
-loaded_models_names.append('pack_laenge')
-loaded_models.append(joblib.load(
-    hf_hub_download("Adriperse/RD-CA2", "season_model.pkl")
-))
-loaded_models_names.append('season')
+# loaded_models.append(joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "pack_hoehe_model.pkl")
+# ))
+# loaded_models_names.append('pack_hoehe')
+# loaded_models.append(joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "pack_laenge_model.pkl")
+# ))
+# loaded_models_names.append('pack_laenge')
+# loaded_models.append(joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "season_model.pkl")
+# ))
+# loaded_models_names.append('season')
 
-
+# not_loaded_models = ['tax_class_id']
 
 
 # The main function
@@ -125,7 +126,7 @@ loaded_models_names.append('season')
 def create_csv():
     needed_columns = [
         'type','Attributmenge','o_Optionen','Orphan','Hat_Optionen','vendor','brand','visibility','cost','price','special price','tax_class_id',
-        'Beschreibung','Menge','gewicht','Bild','Weitere Bilder','ean','herstellerbezeichnung','grundpreis_menge','grundpreis_einheit',
+        'Beschreibung','Menge','Gewicht','Bild','Weitere Bilder','ean','herstellerbezeichnung','grundpreis_menge','grundpreis_einheit',
         'destatis_warennummer','country_of_manufacture','manufacturer_nr','material','passform','simples_skus','LiNr','base_color',
         'pack_laenge','pack_breite','pack_hoehe','is_shop','is_stock_item','season','pvs_verpackungstyp','gefahrgut','VPE','cost Discount'
     ]
@@ -325,7 +326,10 @@ def create_csv():
                         current_row_data.append(df['zielgruppe'].iloc[current_row_nr-1])
                     elif column == 'special price':
                         if 'get_price' in functions_list:
-                            price = float(str(eval('Convert_'+producer+'.get_price')(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr)).replace(',','.'))
+                            try:
+                                price = float(str(eval('Convert_'+producer+'.get_price')(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr)).replace(',','.'))
+                            except ValueError:
+                                price = np.nan
                             if 'get_tax_class_id' in functions_list:
                                 tax_id = eval('Convert_'+producer+'.get_tax_class_id')(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr)
                             else:
@@ -410,7 +414,10 @@ def create_csv():
                         current_row_data.append(df['zielgruppe'].iloc[current_row_nr-1])
                     elif column == 'special price':
                         if 'get_price' in functions_list:
-                            price = float(str(eval('Convert_'+producer+'.get_price')(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr)).replace(',','.'))
+                            try:
+                                price = float(str(eval('Convert_'+producer+'.get_price')(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr)).replace(',','.'))
+                            except ValueError:
+                                price = np.nan
                             if 'get_tax_class_id' in functions_list:
                                 tax_id = eval('Convert_'+producer+'.get_tax_class_id')(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr)
                             else:
@@ -480,8 +487,7 @@ def create_csv():
     # go through the list of columns and call the corresponding model for each of them
     # this is already done before
     
-    ### Step 5: save the results in a csv-file
-    output_data_path = os.getenv("OUTPUT_DATA_PATH")
+    ### Step 5: save the results in a csv-file   
     result = pd.DataFrame(all_rows_data, columns = needed_columns)
     for i in range(len(result)):
         row = result.iloc[i]
@@ -489,6 +495,7 @@ def create_csv():
         if len(unknown_columns) > 0:
             print(f'In the row {i+2} the value of the column {unknown_columns} is unknown')
     print('successfully finished')
+    # output_data_path = os.getenv("OUTPUT_DATA_PATH")
     # result.to_csv(output_data_path + producer + '_upload.csv',sep=',', quoting=csv.QUOTE_ALL, index = False)
     return result
 

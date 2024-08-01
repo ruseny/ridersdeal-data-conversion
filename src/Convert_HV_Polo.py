@@ -8,6 +8,7 @@
 import re
 import fasttext
 from huggingface_hub import hf_hub_download
+import joblib
 
 fasttext.FastText.eprint = lambda x: None # Disable fasttext warnings
 
@@ -117,6 +118,15 @@ model_at = fasttext.load_model(
 model_zg = fasttext.load_model(
     hf_hub_download("Adriperse/RD-CA", "hvpolo_zielgruppe_model.bin")
 )
+# model_pack_breite = joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "pack_breite_model.pkl")
+# )
+# model_pack_hoehe = joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "pack_hoehe_model.pkl")
+# )
+# model_pack_laenge = joblib.load(
+#     hf_hub_download("Adriperse/RD-CA2", "pack_laenge_model.pkl")
+# )
 
 label_mapper_at = {
     '__label__Decken': 'Decken',
@@ -382,16 +392,31 @@ def get_base_color(use_configurable,current_row,row_is_simple,current_row_nr, cu
         return ""
     
 # def get_pack_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-#     # print("Information on item length is available. Parcel length needs to be calculated.")
-#     return ""
+#     try: 
+#         name = get_name(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr)
+#         input = name + " " + current_attr
+#         pred = model_pack_laenge.predict([input])[0]
+#     except:
+#         pred = ""
+#     return pred
 
 # def get_pack_breite(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-#     # print("Information on item width is available. Parcel width needs to be calculated.")
-#     return ""
+#     try: 
+#         name = get_name(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr)
+#         input = name + " " + current_attr
+#         pred = model_pack_breite.predict([input])[0]
+#     except:
+#         pred = ""
+#     return pred
 
 # def get_pack_hoehe(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
-#     # print("Information on item height is available. Parcel height needs to be calculated.")
-#     return ""
+#     try: 
+#         name = get_name(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr)
+#         input = name + " " + current_attr
+#         pred = model_pack_hoehe.predict([input])[0]
+#     except:
+#         pred = ""
+#     return pred
 
 # def get_is_shop(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr, current_attr):
 #     # print("1 is entered as the default value for 'is_shop'. This should normally be defined by the user.")

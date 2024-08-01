@@ -183,7 +183,7 @@ def get_name(use_configurable,current_row,row_is_simple,current_row_nr, current_
 
 def get_o_Optionen(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
     if current_attr in dict_o_Optionen.keys():
-        return dict_o_Optionen[produktname]
+        return dict_o_Optionen[current_attr]
     else:
         return ''
 
@@ -215,16 +215,16 @@ def get_brand(use_configurable,current_row,row_is_simple,current_row_nr, current
     return current_row['KATALOG_BEZEICHNUNG_DICT'].split()[0]
 
 ### THIS NEEDS TO BE REWORKED AS SOON AS I FIND OUT WHERE THE COST IS IN THE PRODUCT DATA
-def get_cost(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
-    return '???'
+# def get_cost(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
+#     return '???'
 
-### THIS NEEDS TO BE REWORKED AS SOON AS I FIND OUT WHERE THE PRICE IS IN THE PRODUCT DATA
-def get_price(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
-    return '???'
+# ### THIS NEEDS TO BE REWORKED AS SOON AS I FIND OUT WHERE THE PRICE IS IN THE PRODUCT DATA
+# def get_price(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
+#     return '???'
 
-### THIS NEEDS TO BE REWORKED AS SOON AS THERES DATA WHERE THIS COLUMN ISNT EMPTY
-def get_special_price(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
-    return ''
+# ### THIS NEEDS TO BE REWORKED AS SOON AS THERES DATA WHERE THIS COLUMN ISNT EMPTY
+# def get_special_price(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
+#     return ''
 
 ### THIS NEEDS TO BE REWORKED AS SOON AS THERES DATA WHERE THIS COLUMN ISNT 1
 def get_tax_class_id(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
@@ -510,4 +510,9 @@ def get_oberbekleidung_groesse(use_configurable,current_row,row_is_simple,curren
         else:
             row_to_look_at = 'GROESSE_BEKLEID_MENSCH_INTL_SLA_SEL'
         return str(current_row[row_to_look_at]).replace('/','-')
+    return ''
+
+def get_strick_laenge(use_configurable,current_row,row_is_simple,current_row_nr, current_LiNr,colors_dict,total_row_nr,current_attr):
+    if current_attr == 'Stricke' and row_is_simple:
+        return current_row['LAENGE_ARTIKEL_NUM'].replace(' ','')
     return ''
