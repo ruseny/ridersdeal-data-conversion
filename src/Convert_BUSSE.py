@@ -52,7 +52,8 @@ Warengruppen_dict = {
 }
 
 from src.stopwords_de import stopwords
-nltk.data.path.append("data/nltk_data")
+nltk.data.load("data/german.pickle")
+nltk.data.load("data/german")
 
 def normalize_document(doc):
     # fix contractions
