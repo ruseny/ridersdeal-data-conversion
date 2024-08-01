@@ -493,7 +493,10 @@ def create_csv():
         row = result.iloc[i]
         unknown_columns = row[row == 'Unknown'].index.tolist()
         if len(unknown_columns) > 0:
-            print(f'In the row {i+2} the value of the column {unknown_columns} is unknown')
+            try:    
+                print(f'In the row {i+2} the value of the column {unknown_columns} is unknown')
+            except BrokenPipeError:
+                pass
     print('successfully finished')
     # output_data_path = os.getenv("OUTPUT_DATA_PATH")
     # result.to_csv(output_data_path + producer + '_upload.csv',sep=',', quoting=csv.QUOTE_ALL, index = False)
