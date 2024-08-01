@@ -52,6 +52,7 @@ Warengruppen_dict = {
 }
 
 from src.stopwords_de import stopwords
+nltk.data.path.append("data/nltk_data")
 
 def normalize_document(doc):
     # fix contractions
@@ -64,7 +65,7 @@ def normalize_document(doc):
     doc = doc.strip()
     doc = re.sub(r' +',' ', doc)
     # tokenize document
-    tokens = nltk.word_tokenize(text = doc)
+    tokens = nltk.word_tokenize(text = doc, language = 'german')
     #filter stopwords out of document
     filtered_tokens = [token.strip() for token in tokens if token.strip() not in stopwords]
     # re-create document from filtered tokens
