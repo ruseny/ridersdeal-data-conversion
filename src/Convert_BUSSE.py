@@ -51,7 +51,7 @@ Warengruppen_dict = {
     'BMT': 'Trensen, Kandaren und Halfter'
 }
 
-from stopwords_de import stopwords
+from src.stopwords_de import stopwords
 
 def normalize_document(doc):
     # fix contractions
