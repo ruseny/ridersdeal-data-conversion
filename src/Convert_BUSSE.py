@@ -2,7 +2,7 @@
 import re
 # import csv
 import joblib
-import nltk
+# import nltk
 import contractions
 # import tqdm
 from huggingface_hub import hf_hub_download
@@ -51,8 +51,7 @@ Warengruppen_dict = {
     'BMT': 'Trensen, Kandaren und Halfter'
 }
 
-from src.stopwords_de import stopwords
-nltk.data.path.append("/mount/src/ridersdeal-data-conversion/data/nltk_data/")
+# from src.stopwords_de import stopwords
 
 def normalize_document(doc):
     # fix contractions
@@ -65,11 +64,11 @@ def normalize_document(doc):
     doc = doc.strip()
     doc = re.sub(r' +',' ', doc)
     # tokenize document
-    tokens = nltk.word_tokenize(text = doc, language = 'german')
-    #filter stopwords out of document
-    filtered_tokens = [token.strip() for token in tokens if token.strip() not in stopwords]
-    # re-create document from filtered tokens
-    doc = ' '.join(filtered_tokens)
+    # tokens = nltk.word_tokenize(text = doc, language = 'german')
+    # #filter stopwords out of document
+    # filtered_tokens = [token.strip() for token in tokens if token.strip() not in stopwords]
+    # # re-create document from filtered tokens
+    # doc = ' '.join(filtered_tokens)
     return doc
 
 
