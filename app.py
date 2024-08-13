@@ -95,30 +95,30 @@ else:
             data = pd.read_excel(data_raw)
 
 
-# # Downloading models
-# loaded_models = []
-# # these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
-# loaded_models_names = []
+# Downloading models
+loaded_models = []
+# these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
+loaded_models_names = []
 
-# loaded_models.append(joblib.load(
-#     hf_hub_download("Adriperse/RD-CA2", "pack_breite_model.pkl")
-# ))
-# loaded_models_names.append('pack_breite')
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "pack_breite_model.pkl")
+))
+loaded_models_names.append('pack_breite')
 
-# loaded_models.append(joblib.load(
-#     hf_hub_download("Adriperse/RD-CA2", "pack_hoehe_model.pkl")
-# ))
-# loaded_models_names.append('pack_hoehe')
-# loaded_models.append(joblib.load(
-#     hf_hub_download("Adriperse/RD-CA2", "pack_laenge_model.pkl")
-# ))
-# loaded_models_names.append('pack_laenge')
-# loaded_models.append(joblib.load(
-#     hf_hub_download("Adriperse/RD-CA2", "season_model.pkl")
-# ))
-# loaded_models_names.append('season')
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "pack_hoehe_model.pkl")
+))
+loaded_models_names.append('pack_hoehe')
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "pack_laenge_model.pkl")
+))
+loaded_models_names.append('pack_laenge')
+loaded_models.append(joblib.load(
+    hf_hub_download("Adriperse/RD-CA2", "season_model.pkl")
+))
+loaded_models_names.append('season')
 
-# not_loaded_models = ['tax_class_id']
+not_loaded_models = ['tax_class_id']
 
 
 # The main function
@@ -177,34 +177,6 @@ def create_csv():
     
     ### Step 1: read the data and all the other needed data values (are there any other things needed to be read?)
     
-    # i placed a file with the color-dictionary in this folder, it doesnt need to be there but it needs to be somewhere
-    # colors_dict_path = os.getenv("COLOR_DICT_FILE")
-    # colors_dict_file = pd.read_excel(colors_dict_path, sheet_name = 0)
-    # colors_dict = {}
-    # for i in range(len(colors_dict_file)):
-    #     colors_dict[colors_dict_file.iloc[i]['Hersteller'].lower()] = colors_dict_file.iloc[i]['Grundfarbe']
-    
-    ### THESE VALUES WILL BE READ IN FROM THE EXCEL FILE
-    # user_input_path = os.getenv("USER_INPUT_FILE")
-    # main_excel_file = pd.read_excel(user_input_path)
-    # # producer = main_excel_file['Unnamed: 2'].iloc[4]
-    # check_stock_shop = main_excel_file['Unnamed: 2'].iloc[5]
-    # if check_stock_shop == 'is_shop':
-    #     is_shop = 1
-    #     is_stock_item = 0
-    # elif check_stock_shop == 'is_stock_item':
-    #     is_shop = 0
-    #     is_stock_item = 1
-    # else:
-    #     is_shop = 0
-    #     is_stock_item = 0
-    # discount = main_excel_file['Unnamed: 2'].iloc[6]
-    # target_margin = main_excel_file['Unnamed: 2'].iloc[7]
-
-    # values for the calculation of the special price
-    # margin_factor = 1 / (1 - target_margin / 100)
-    # discount_factor = 1 - discount / 100
-    
     grouping_columns_dict = {
         "BUSSE" : ['Bezeichnung','Farbe'],
         "Kerbl" : ['ERP_BEZEICHNUNG_1_STR','FARBE_MARKETING_SLA_SEL'],
@@ -212,19 +184,6 @@ def create_csv():
         "HV_Polo" : ["Name","Colour"], 
         "HKM" : ["Beschreibung","Beschreibung 2"]
     }
-
-    # product_data_dir = os.getenv("PRODUCT_DATA_PATH")
-    
-    # if producer == 'BUSSE' :
-    #     data = pd.read_excel(product_data_dir + "BUSSE_product-data.xlsx", sheet_name = 2)
-    #     pic_idx = pd.read_excel(product_data_dir + "BUSSE_product-data.xlsx", sheet_name = 0)
-    #     list_pic_idx = []
-    #     for i in range(len(data)):
-    #         list_pic_idx.append(list(pic_idx[pic_idx['ArtNr'] == data['Artikelnummer'].iloc[i]].sort_values(by='Ranking')['Bilddatei'].values))
-    #     data['picture_ids'] = list_pic_idx
-    # else:
-    #     data = pd.read_excel(product_data_dir + producer + '_product-data.xlsx')
-    #     # -> get the data file / path as an input or let the user place the follow in the ordner the program is in?
     
     # ### Step 2: predict Attributmenge / Zielgruppe if its not given by the data already or read them from the data if possible
     
@@ -277,10 +236,10 @@ def create_csv():
             if col not in needed_columns:
                 needed_columns.append(col)
     
-    loaded_models = []
-    # these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
-    loaded_models_names = []
-    not_loaded_models = []
+    # loaded_models = []
+    # # these lists are just for not loading the same model twice / not displaying the same message that a model wasnt found multiple times
+    # loaded_models_names = []
+    # not_loaded_models = []
     
     ### filling the data
     # this is mostly the same code as in the Convert_*** notebook
