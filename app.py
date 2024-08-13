@@ -342,7 +342,6 @@ def create_csv():
                                         if column not in not_loaded_models:
                                             print(f'The model {column}_model.pkl was not found')
                                             not_loaded_models.append(column)
-                                        current_row_data.append('')
                                         tax_id = 'not_found'
                                 if 'tax_class_id' in loaded_models_names:
                                     tax_id = loaded_models[loaded_models_names.index('tax_class_id')].predict([input])[0]
@@ -430,7 +429,6 @@ def create_csv():
                                         if column not in not_loaded_models:
                                             print(f'The model {column}_model.pkl was not found')
                                             not_loaded_models.append(column)
-                                        current_row_data.append('')
                                         tax_id = 'not_found'
                                 if 'tax_class_id' in loaded_models_names:
                                     tax_id = loaded_models[loaded_models_names.index('tax_class_id')].predict([input])[0]
