@@ -348,9 +348,9 @@ def create_csv():
                             if tax_id != 'not_found':
                                 # i dont know how the value of of tax.compute_all is calculated
                                 if tax_id == '1':
-                                    tax_factor = 1
+                                    tax_factor = 1.19
                                 else:
-                                    tax_factor = 1
+                                    tax_factor = 1.07
                                 price = price * tax_factor * margin_factor * discount_factor
                                 if price < 10:
                                     digits = 1
@@ -435,9 +435,9 @@ def create_csv():
                             if tax_id != 'not_found':
                                 # i dont know how the value of of tax.compute_all is calculated
                                 if tax_id == '1':
-                                    tax_factor = 1
+                                    tax_factor = 1.19
                                 else:
-                                    tax_factor = 1
+                                    tax_factor = 1.07
                                 price = price * tax_factor * margin_factor * discount_factor
                                 if price < 10:
                                     digits = 1
